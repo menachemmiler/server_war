@@ -4,6 +4,6 @@ export interface LoginDto {
 }
 
 export interface RegisterDto extends LoginDto {
-  location?: string;
+  area?: string;
   organiz: string;
 }

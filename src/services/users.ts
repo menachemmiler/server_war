@@ -7,24 +7,31 @@ import jwt from "jsonwebtoken";
 
 export const userLogin = async (user: LoginDto) => {
   try {
+    const { password, username } = user;
+    if (!password || !username) {
+      throw new Error("password and username is required to login");
+    }
     const userFromDatabase = await User.findOne({
       username: user.username,
-    }).lean();
+    });
     if (!userFromDatabase) throw new Error("user not found");
+
     const match = await compare(user.password, userFromDatabase.password);
     if (!match) throw new Error("wrong password");
     // gen token
     const token = await jwt.sign(
       {
-        user_id: userFromDatabase._id,
+        _id: userFromDatabase._id,
         username: userFromDatabase.username,
+        organiz: userFromDatabase.organiz,
       },
       process.env.JWT_SECRET!,
       {
         expiresIn: "10m",
       }
     );
-    return { ...userFromDatabase, token, password: "*******" };
+    const { organiz } = userFromDatabase;
+     return {organiz, username , token, password: "*******" };
   } catch (err) {
     throw err;
   }
@@ -37,7 +44,7 @@ export const createNewUser = async (user: RegisterDto) => {
     }
     if (!user.password)
       throw new Error("Missing user data, [password] is require");
-    if (user.location && !locations.includes(user.location)) {
+    if (user.area && !locations.includes(user.area)) {
       throw new Error(
         "not valid location! (locations=[North, South, Center, West Bank])"
       );
@@ -48,11 +55,8 @@ export const createNewUser = async (user: RegisterDto) => {
     }
     if (user.organiz.includes(" ")) {
       console.log(50, user.organiz.split(" - ")[1]);
-      user.location = user.organiz.split(" - ")[1];
+      user.area = user.organiz.split(" - ")[1];
     }
-    // if (ifOrganiz.name.includes(" ") && !user.location) {
-    //   throw new Error("if you from the idf the location is required");
-    // }
     const encPass = await hash(user.password, 10);
     user.password = encPass;
     const { name, resources, budget } = ifOrganiz;
