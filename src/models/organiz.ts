@@ -19,7 +19,6 @@ const ResourceSchema: Schema = new Schema<IResources>({
 export const organizSchema = new Schema<IOrganiz>({
   name: {
     type: String,
-    unique: true,
   },
   resources: { type: [ResourceSchema], required: true },
   budget: { type: Number, required: true },

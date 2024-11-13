@@ -43,21 +43,24 @@ export const createNewUser = async (user: RegisterDto) => {
       );
     }
     const ifOrganiz = await organiz.findOne({ name: user.organiz });
-    console.log("46 :", ifOrganiz)
     if (!ifOrganiz) {
       throw new Error("this organiz not exist");
     }
-    if (ifOrganiz.name.includes(" ") && !user.location) {
-      throw new Error("if you from the idf the location is required");
+    if (user.organiz.includes(" ")) {
+      console.log(50, user.organiz.split(" - ")[1]);
+      user.location = user.organiz.split(" - ")[1];
     }
+    // if (ifOrganiz.name.includes(" ") && !user.location) {
+    //   throw new Error("if you from the idf the location is required");
+    // }
     const encPass = await hash(user.password, 10);
     user.password = encPass;
     const { name, resources, budget } = ifOrganiz;
     const newUser = new User({ ...user, organiz: { name, resources, budget } });
     return await newUser.save();
-  } catch (err) {
-    console.log(err);
-    throw new Error("Can't create new user");
+  } catch (err: any) {
+    console.log(err.message);
+    throw new Error(`Can't create new user: ${err.message}`);
   }
 };
 
@@ -77,4 +80,3 @@ export const profileService = async (user: { user_id: string }) => {
     throw new Error(`${err.message}`);
   }
 };
-
