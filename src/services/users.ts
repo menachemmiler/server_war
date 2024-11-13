@@ -31,7 +31,7 @@ export const userLogin = async (user: LoginDto) => {
       }
     );
     const { organiz } = userFromDatabase;
-     return {organiz, username , token, password: "*******" };
+    return { organiz, username, token, password: "*******" };
   } catch (err) {
     throw err;
   }
@@ -79,6 +79,21 @@ export const profileService = async (user: { user_id: string }) => {
     // console.log({ findById });
     if (!findById) throw new Error("user not found!");
     return findById;
+  } catch (err: any) {
+    console.log(err);
+    throw new Error(`${err.message}`);
+  }
+};
+
+export const myOrganizService = async (user: { _id: string }) => {
+  // console.log({ user });
+  try {
+    if (!user) {
+      throw new Error("user is required!");
+    }
+    const findById = await User.findOne({ _id: user._id });
+    if (!findById) throw new Error("user not found!");
+    return findById.organiz;
   } catch (err: any) {
     console.log(err);
     throw new Error(`${err.message}`);
