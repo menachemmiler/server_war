@@ -32,30 +32,29 @@ export const userLogin = async (user: LoginDto) => {
 
 export const createNewUser = async (user: RegisterDto) => {
   try {
-    return await organiz.find({});
-    // if (!user.username) {
-    //   throw new Error("username is required!");
-    // }
-    // if (!user.password)
-    //   throw new Error("Missing user data, [password] is require");
-    // if (user.location && !locations.includes(user.location)) {
-    //   throw new Error(
-    //     "not valid location! (locations=[North, South, Center, West Bank])"
-    //   );
-    // }
-    // const ifOrganiz = await organiz.findOne({ name: user.organiz });
-    // console.log("46 :", ifOrganiz)
-    // if (!ifOrganiz) {
-    //   throw new Error("this organiz not exist");
-    // }
-    // if (ifOrganiz.name.includes(" ") && !user.location) {
-    //   throw new Error("if you from the idf the location is required");
-    // }
-    // const encPass = await hash(user.password, 10);
-    // user.password = encPass;
-    // const { name, resources, budget } = ifOrganiz;
-    // const newUser = new User({ ...user, organiz: { name, resources, budget } });
-    // return await newUser.save();
+    if (!user.username) {
+      throw new Error("username is required!");
+    }
+    if (!user.password)
+      throw new Error("Missing user data, [password] is require");
+    if (user.location && !locations.includes(user.location)) {
+      throw new Error(
+        "not valid location! (locations=[North, South, Center, West Bank])"
+      );
+    }
+    const ifOrganiz = await organiz.findOne({ name: user.organiz });
+    console.log("46 :", ifOrganiz)
+    if (!ifOrganiz) {
+      throw new Error("this organiz not exist");
+    }
+    if (ifOrganiz.name.includes(" ") && !user.location) {
+      throw new Error("if you from the idf the location is required");
+    }
+    const encPass = await hash(user.password, 10);
+    user.password = encPass;
+    const { name, resources, budget } = ifOrganiz;
+    const newUser = new User({ ...user, organiz: { name, resources, budget } });
+    return await newUser.save();
   } catch (err) {
     console.log(err);
     throw new Error("Can't create new user");
