@@ -1,12 +1,13 @@
 import { Schema, Types, Document, model } from "mongoose";
-import { organizSchema } from "./organiz";
+import {  IOrganiz, organizSchema } from "./organiz";
 
 export interface IUser extends Document {
   username: string;
   password: string;
-  organiz: {};
+  organiz: IOrganiz;
   area: string;
 }
+
 
 const userSchema = new Schema<IUser>({
   username: {

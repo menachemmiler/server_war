@@ -11,6 +11,7 @@ export interface IOrganiz extends Document {
   budget: number;
 }
 
+
 const ResourceSchema: Schema = new Schema<IResources>({
   name: { type: String, required: true },
   amount: { type: Number, required: true },

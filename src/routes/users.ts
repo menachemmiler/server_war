@@ -5,6 +5,7 @@ import {
   myOrganizService,
   // initDatabase,
   profileService,
+  sendMissileService,
   userLogin,
 } from "../services/users";
 
@@ -48,6 +49,16 @@ export const myOrganiz = async (req: Request, res: Response) => {
   }
 };
 
+//to send him a missile
+
+// export const sendMissile = async (req: Request, res: Response) => {
+//   try {
+//     const resulte = await sendMissileService((req as any).user, res.body);
+//     res.status(200).json(resulte);
+//   } catch (err: any) {
+//     res.status(400).json(err.message);
+//   }
+// };
 
 
 
