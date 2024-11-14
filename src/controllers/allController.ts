@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { sid } from "../routes/all";
+import { allOrganizName, sid } from "../routes/all";
 
 const router = Router()
 
-router.post('/sid', sid)
+router.post('/sid', sid);
+
+
+router.get('/allOrganizName', allOrganizName)
 
 
 

@@ -221,3 +221,13 @@ export const initDatabase = async () => {
     );
   }
 };
+
+export const getAllOrganizsNameService = async () => {
+  try {
+    const allOrganizs = await organiz.find({});
+    if (!allOrganizs) throw new Error("con't get all organizs");
+    return allOrganizs.map((o) => o.name);
+  } catch (err: any) {
+    console.log("con't get all organizs name", err.message);
+  }
+};
