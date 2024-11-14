@@ -37,7 +37,13 @@ io.on("connection", (socket) => {
       if (status == "sent") {
         const savedA = new attack({ area, idAttacker, name, timeAttack });
         await savedA.save();
-        io.emit(`attack-${area}`, savedA);
+        const allAttacsByArea = await attack.find({ area });
+        if (!allAttacsByArea) throw new Error("con't get allAttacsByArea");
+        const allAttacsByAttackerId = await attack.find({ idAttacker });
+        if (!allAttacsByAttackerId)
+          throw new Error("con't get allAttacsByAttackerId");
+        io.emit(`attack-${area}`, allAttacsByArea);
+        io.emit(`attack-${idAttacker}`, allAttacsByAttackerId);
       }
     } catch (err: any) {
       console.log(err.message);

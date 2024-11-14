@@ -11,7 +11,7 @@ export interface IMissile extends Document {
 export const missileSchema = new Schema<IMissile>({
   name: {
     type: String,
-    unique: true,
+    // unique: true,
   },
   description: {
     type: String,
