@@ -1,9 +1,21 @@
 import { io } from "../app";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
-import attack, { IAttack } from "../models/attack";
+import attack from "../models/attack";
 import { getAllUsersAttacs } from "../services/users";
 // import
+
+//אינטרפייס מיוחד למתקפה שכבר נוצרה ויש לה _id
+interface IAttack {
+  _id?: string;
+  name: string;
+  idAttacker: string;
+  idIntercepted?: string; //אם הוא יורט באמת
+  timeAttack?: Date;
+  timeToHit: number;
+  area?: string;
+  status?: "sent" | "fell" | "intercepted";
+}
 
 io.on("connection", (socket) => {
   console.log("A user connected"); // הדפסת התחברות לקוח
@@ -14,28 +26,48 @@ io.on("connection", (socket) => {
   socket.on("attack", async (data: IAttack) => {
     try {
       console.log("attack", data);
-      const { idAttacker, name, idIntercepted, timeAttack, area, status } =
+      const { idAttacker, name, idIntercepted, timeAttack, area, status, _id , timeToHit} =
         data;
       if (area == "" || !area) {
         throw new Error("area is required");
       }
-      // if (status == "intercepted") {
-      //   if (!idAttacker) throw new Error("idAttacker is required!");
-      //   //to save the attack
-      //   // const savedA = await attack
-      //   return;
-      // }
+      if (!idAttacker) throw new Error("idAttacker is required!");
+      if (status == "intercepted") {
+        //to update the attack
+        const attackToUpdate = await attack.findOne({ _id: _id });
+        if (!attackToUpdate) throw new Error("attack not found");
+        attackToUpdate.status = "intercepted";
+        attackToUpdate.idIntercepted = idIntercepted as any;
+        await attackToUpdate.save();
+        return;
+      }
+      if(status == "fell"){
+        const attackToUpdate = await attack.findOne({ _id: _id });
+        if (!attackToUpdate) throw new Error("attack not found");
+        attackToUpdate.status = "fell";
+        await attackToUpdate.save();
+        return;
+      }
       const attacker = await User.findOne({ _id: idAttacker });
       if (!attacker) {
         throw new Error("user not found");
       }
+      //להפחית את הכמות של הטילים של אותו attacker באחד
+      attacker.organiz.resources = attacker.organiz.resources.map((r) => {
+        if (r.name == name) {
+          r.amount -= 1;
+        }
+        return r;
+      });
+      await attacker.save();
+      io.emit(`updateResources-${attacker._id}`, attacker.organiz.resources);
       // const attack: IAttack = {
       //   name,
       //   idAttacker,
       //   area: area,
       // };
       if (status == "sent") {
-        const savedA = new attack({ area, idAttacker, name, timeAttack });
+        const savedA = new attack({ area, idAttacker, name, timeAttack , timeToHit});
         await savedA.save();
         const allAttacsByArea = await attack.find({ area });
         if (!allAttacsByArea) throw new Error("con't get allAttacsByArea");
