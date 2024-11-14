@@ -4,7 +4,7 @@ import User from "../models/user";
 import attack from "../models/attack";
 import { getAllUsersAttacs } from "../services/users";
 import user from "../models/user";
-import missile from "../models/missile";
+import missile, { IMissile } from "../models/missile";
 // import
 
 //אינטרפייס מיוחד למתקפה שכבר נוצרה ויש לה _id
@@ -43,11 +43,18 @@ io.on("connection", (socket) => {
         const itercepted = await user.findOne({ _id: idIntercepted });
         if (!itercepted) throw new Error("con't get itercepted");
         //to get all Itercepted missiles
-        itercepted.organiz.resources.forEach(async (r) => {
-          const mis = await missile.find({ name: r.name });
-          // if(mis.tim)
-        });
-
+        // itercepted.organiz.resources.forEach(async (r) => {
+        //   const mis: IMissile | any = await missile.find({ name: r.name });
+        //   if (mis.intercepts.include(name)) {
+        //     const allAttacsByArea = await attack.find({ area });
+        //     if (!allAttacsByArea) throw new Error("con't get allAttacsByArea");
+        //     const allAttacsByAttackerId = await attack.find({ idAttacker });
+        //     if (!allAttacsByAttackerId)
+        //       throw new Error("con't get allAttacsByAttackerId");
+        //     io.emit(`attack-${area}`, allAttacsByArea);
+        //     io.emit(`attack-${idAttacker}`, allAttacsByAttackerId);
+        //   }
+        // });
 
         const allAttacsByArea = await attack.find({ area });
         if (!allAttacsByArea) throw new Error("con't get allAttacsByArea");
