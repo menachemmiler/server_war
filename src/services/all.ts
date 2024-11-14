@@ -1,3 +1,4 @@
+import attack from "../models/attack";
 import missile from "../models/missile";
 import organiz from "../models/organiz";
 
@@ -211,9 +212,15 @@ export const initDatabase = async () => {
         price: 40000,
       },
     ];
+    const initialAttack = new attack({
+      name: "Fajr-5",
+      idAttacker: "64c9a2c1d1c3a9b9b9b9b9b9",
+      idIntercepted: "67349f9e3fd5305fd33794aa",
+    });
+    const savedA = await initialAttack.save();
     const savedM = await missile.insertMany(allMissil);
     const savedO = await organiz.insertMany(allOrganiz);
-    return { savedO, savedM };
+    return { savedO, savedM, savedA };
   } catch (err) {
     console.log(
       "Error accured while creating initial state of candidates",

@@ -1,14 +1,28 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema, Types } from "mongoose";
 export interface IAttack {
-    name: string;
-    timeToHit: number;
-    idAttacker: string;
-    idIntercepted?: string;//אם הוא יורט באמת
+  name: string;
+  idAttacker: Schema.Types.ObjectId;
+  idIntercepted?: Schema.Types.ObjectId; //אם הוא יורט באמת
+  timeAttack?: Date;
+  area?: string;
 }
 const attackSchema = new Schema<IAttack>({
-    name: String,//שם הטיל 
-    timeToHit: Number,//
-    idAttacker: String,//מזהה של האדם ששלח את הטיל
-    idIntercepted: String,//מזהה של האדם שירט את הטיל
+  name: String, //שם הטיל
+  idAttacker: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  }, //מזהה של האדם ששלח את הטיל
+  idIntercepted: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  }, //מזהה של האדם שירט את הטיל
+  timeAttack: {
+    type: Date,
+    default: Date.now,
+  },
+  area: {
+    type: String,
+  },
 });
-export default mongoose.model<IAttack>("Attack", attackSchema)
+
+export default mongoose.model<IAttack>("Attack", attackSchema);

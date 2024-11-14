@@ -1,4 +1,5 @@
 import { Schema, Types, Document, model } from "mongoose";
+import { IMissile, missileSchema } from "./missile";
 
 export interface IResources extends Document {
   name: string;

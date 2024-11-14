@@ -87,44 +87,42 @@ export const profileService = async (user: { user_id: string }) => {
   }
 };
 
-export const myOrganizService = async (user: { _id: string }) => {
-  // console.log({ user });
-  try {
-    if (!user) {
-      throw new Error("user is required!");
-    }
-    const findById = await User.findOne({ _id: user._id });
-    if (!findById) throw new Error("user not found!");
-    return findById.organiz;
-  } catch (err: any) {
-    console.log(err);
-    throw new Error(`${err.message}`);
-  }
-};
 
-//to send a miisile i need to get in the body the name of the missile
-//2) to check if he is a terrorist or idf
-//3) to check if he has enough resources
-//and if he a terorist i need to get the location that he throught
-//and to dec the sum of resources in the organiz
-export const sendMissileService = async (
-  user: { _id: string },
-  missile: string
-) => {
-  try {
-    if (!user) {
-      throw new Error("user is required!");
-    }
-    const findById = await User.findOne({ _id: user._id });
-    if (!findById) throw new Error("user not found!");
-    const his_resources = findById.organiz.resources.find(
-      (r) => r.name == missile
-    );
-    if (!his_resources) {
-      throw new Error("you dont have this missile");
-    }
-  } catch (err: any) {
-    console.log(err);
-    throw new Error(`${err.message}`);
-  }
-};
+
+// export const myOrganizService = async (user: { _id: string }) => {
+//   // console.log({ user });
+//   try {
+//     if (!user) {
+//       throw new Error("user is required!");
+//     }
+//     const findById = await User.findOne({ _id: user._id });
+//     if (!findById) throw new Error("user not found!");
+//     return findById.organiz;
+//   } catch (err: any) {
+//     console.log(err);
+//     throw new Error(`${err.message}`);
+//   }
+// };
+
+
+// export const sendMissileService = async (
+//   user: { _id: string },
+//   missile: string
+// ) => {
+//   try {
+//     if (!user) {
+//       throw new Error("user is required!");
+//     }
+//     const findById = await User.findOne({ _id: user._id });
+//     if (!findById) throw new Error("user not found!");
+//     const his_resources = findById.organiz.resources.find(
+//       (r) => r.name == missile
+//     );
+//     if (!his_resources) {
+//       throw new Error("you dont have this missile");
+//     }
+//   } catch (err: any) {
+//     console.log(err);
+//     throw new Error(`${err.message}`);
+//   }
+// };
