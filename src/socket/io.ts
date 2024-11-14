@@ -23,31 +23,53 @@ io.on("connection", (socket) => {
     console.log(`a user is login`);
   });
 
-  socket.on("attack", async (data: IAttack) => {
+  socket.on("intercept", async (data: IAttack) => {
     try {
-      console.log("attack", data);
-      const { idAttacker, name, idIntercepted, timeAttack, area, status, _id , timeToHit} =
+      const { idAttacker, name, idIntercepted, timeAttack, area, status, _id } =
         data;
       if (area == "" || !area) {
         throw new Error("area is required");
       }
       if (!idAttacker) throw new Error("idAttacker is required!");
-      if (status == "intercepted") {
-        //to update the attack
+      if (status == "sent") {
         const attackToUpdate = await attack.findOne({ _id: _id });
         if (!attackToUpdate) throw new Error("attack not found");
         attackToUpdate.status = "intercepted";
         attackToUpdate.idIntercepted = idIntercepted as any;
         await attackToUpdate.save();
-        return;
+        console.log({ attackToUpdate }, 42);
+        const allAttacsByArea = await attack.find({ area });
+        if (!allAttacsByArea) throw new Error("con't get allAttacsByArea");
+        const allAttacsByAttackerId = await attack.find({ idAttacker });
+        if (!allAttacsByAttackerId)
+          throw new Error("con't get allAttacsByAttackerId");
+        io.emit(`attack-${area}`, allAttacsByArea);
+        io.emit(`attack-${idAttacker}`, allAttacsByAttackerId);
       }
-      if(status == "fell"){
-        const attackToUpdate = await attack.findOne({ _id: _id });
-        if (!attackToUpdate) throw new Error("attack not found");
-        attackToUpdate.status = "fell";
-        await attackToUpdate.save();
-        return;
+    } catch (err: any) {
+      console.log(err.message);
+    }
+  });
+
+
+
+  socket.on("attack", async (data: IAttack) => {
+    try {
+      console.log("attack", data);
+      const {
+        idAttacker,
+        name,
+        idIntercepted,
+        timeAttack,
+        area,
+        status,
+        _id,
+        timeToHit,
+      } = data;
+      if (area == "" || !area) {
+        throw new Error("area is required");
       }
+      if (!idAttacker) throw new Error("idAttacker is required!");
       const attacker = await User.findOne({ _id: idAttacker });
       if (!attacker) {
         throw new Error("user not found");
@@ -67,7 +89,13 @@ io.on("connection", (socket) => {
       //   area: area,
       // };
       if (status == "sent") {
-        const savedA = new attack({ area, idAttacker, name, timeAttack , timeToHit});
+        const savedA = new attack({
+          area,
+          idAttacker,
+          name,
+          timeAttack,
+          timeToHit,
+        });
         await savedA.save();
         const allAttacsByArea = await attack.find({ area });
         if (!allAttacsByArea) throw new Error("con't get allAttacsByArea");
