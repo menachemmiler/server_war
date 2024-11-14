@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { LoginDto, RegisterDto } from "../../dto/user";
 import {
   createNewUser,
+  getAllUsersAttacs,
   myOrganizService,
   // initDatabase,
   profileService,
@@ -34,6 +35,15 @@ export const register = async (
 export const profile = async (req: Request, res: Response) => {
   try {
     const resulte = await profileService((req as any).user);
+    res.status(200).json(resulte);
+  } catch (err: any) {
+    res.status(400).json(err.message);
+  }
+};
+
+export const myAttacks = async (req: Request, res: Response) => {
+  try {
+    const resulte = await getAllUsersAttacs((req as any).user);
     res.status(200).json(resulte);
   } catch (err: any) {
     res.status(400).json(err.message);

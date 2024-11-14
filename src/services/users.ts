@@ -6,6 +6,7 @@ import { compare, hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import user from "../models/user";
 import { IMissile } from "../models/missile";
+import attack from "../models/attack";
 
 export const userLogin = async (user: LoginDto) => {
   try {
@@ -87,42 +88,63 @@ export const profileService = async (user: { user_id: string }) => {
   }
 };
 
+//get all users attacs
+export const getAllUsersAttacs = async (user: { _id: string }) => {
+  console.log("getAllUsersAttacs");
+  try {
+    if (!user) {
+      throw new Error("user is required!");
+    }
+    //find the user
+    console.log(99, { user });
+    const the_user = await User.findOne({ _id: user._id });
+    if (!the_user) throw new Error("user not found!");
+    if (the_user.area) {
+      //אם יש לו איזור זה אומר שהוא חייל
+      const allAttacs = await attack.find({ area: the_user.area });
+      return allAttacs;
+    }
+    const allAttacs = await attack.find({ idAttacker: user._id });
+    return allAttacs;
+  } catch (err: any) {
+    console.log(err);
+    throw new Error(`can't get users attacs ${err.message}`);
+  }
+};
 
+export const myOrganizService = async (user: { _id: string }) => {
+  // console.log({ user });
+  try {
+    if (!user) {
+      throw new Error("user is required!");
+    }
+    const findById = await User.findOne({ _id: user._id });
+    if (!findById) throw new Error("user not found!");
+    return findById.organiz;
+  } catch (err: any) {
+    console.log(err);
+    throw new Error(`${err.message}`);
+  }
+};
 
-// export const myOrganizService = async (user: { _id: string }) => {
-//   // console.log({ user });
-//   try {
-//     if (!user) {
-//       throw new Error("user is required!");
-//     }
-//     const findById = await User.findOne({ _id: user._id });
-//     if (!findById) throw new Error("user not found!");
-//     return findById.organiz;
-//   } catch (err: any) {
-//     console.log(err);
-//     throw new Error(`${err.message}`);
-//   }
-// };
-
-
-// export const sendMissileService = async (
-//   user: { _id: string },
-//   missile: string
-// ) => {
-//   try {
-//     if (!user) {
-//       throw new Error("user is required!");
-//     }
-//     const findById = await User.findOne({ _id: user._id });
-//     if (!findById) throw new Error("user not found!");
-//     const his_resources = findById.organiz.resources.find(
-//       (r) => r.name == missile
-//     );
-//     if (!his_resources) {
-//       throw new Error("you dont have this missile");
-//     }
-//   } catch (err: any) {
-//     console.log(err);
-//     throw new Error(`${err.message}`);
-//   }
-// };
+export const sendMissileService = async (
+  user: { _id: string },
+  missile: string
+) => {
+  try {
+    if (!user) {
+      throw new Error("user is required!");
+    }
+    const findById = await User.findOne({ _id: user._id });
+    if (!findById) throw new Error("user not found!");
+    const his_resources = findById.organiz.resources.find(
+      (r) => r.name == missile
+    );
+    if (!his_resources) {
+      throw new Error("you dont have this missile");
+    }
+  } catch (err: any) {
+    console.log(err);
+    throw new Error(`${err.message}`);
+  }
+};

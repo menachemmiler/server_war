@@ -5,6 +5,7 @@ export interface IAttack {
   idIntercepted?: Schema.Types.ObjectId; //אם הוא יורט באמת
   timeAttack?: Date;
   area?: string;
+  status?: "sent" | "fell" | "intercepted";
 }
 const attackSchema = new Schema<IAttack>({
   name: String, //שם הטיל
@@ -22,6 +23,10 @@ const attackSchema = new Schema<IAttack>({
   },
   area: {
     type: String,
+  },
+  status: {
+    type: String,
+    default: "sent",
   },
 });
 
